@@ -1,9 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
+import imgHero1 from '../../assets/images/Minimal sofa with plant.jpg';
+import imgHero2 from '../../assets/images/Window with sunlight.jpg';
 
 const Hero = () => {
   return (
@@ -31,17 +35,17 @@ const Hero = () => {
                 Une approche consciente du luxe minimaliste.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <a href="#collection" className="px-8 py-3 text-essente-cream bg-essente-charcoal border border-essente-charcoal hover:bg-essente-charcoal/90 transition-all duration-300 uppercase text-sm tracking-widest rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                  Découvrir la Collection
-                </a>
-                <a href="#philosophie" className="px-8 py-3 text-essente-charcoal bg-transparent border border-essente-charcoal hover:bg-essente-charcoal hover:text-essente-cream transition-all duration-300 uppercase text-sm tracking-widest rounded-lg">
+                <Link to="/collection" className="bg-[#000] text-[#fff] px-[40px] py-[15px] rounded-none tracking-[1px] uppercase text-sm hover:opacity-80 transition-opacity duration-300">
+                  DÉCOUVRIR LA COLLECTION
+                </Link>
+                <Link to="/philosophie" className="px-8 py-3 text-essente-charcoal bg-transparent border border-essente-charcoal hover:bg-essente-charcoal hover:text-essente-cream transition-all duration-300 uppercase text-sm tracking-widest rounded-lg">
                   Notre Philosophie
-                </a>
+                </Link>
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-2xl h-full">
-              <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                   alt="Manteau minimaliste beige"
+              <img src={imgHero1}
+                   alt="Minimalist Sofa"
                    className="w-full h-full object-cover aspect-[4/5] md:aspect-[5/6] transition duration-700 ease-in-out hover:scale-105" />
             </div>
           </div>
@@ -67,8 +71,8 @@ const Hero = () => {
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-2xl order-first md:order-last h-full">
-              <img src="https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                   alt="Détail tissu de haute qualité"
+              <img src={imgHero2}
+                   alt="Window Sunlight"
                    className="w-full h-full object-cover aspect-[4/5] md:aspect-[5/6] transition duration-700 ease-in-out hover:scale-105" />
             </div>
           </div>

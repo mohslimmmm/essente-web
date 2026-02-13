@@ -12,6 +12,8 @@ export default {
         'essente-gold': '#C5A059',
         'essente-gold-light': '#E8D4B0',
         'essente-gold-dark': '#A08442',
+        'primary-navy': '#0a192f',
+        'action-orange': '#FF5722',
       },
       fontFamily: {
         elegant: ['"Playfair Display"', 'serif'],

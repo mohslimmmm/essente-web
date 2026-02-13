@@ -2,18 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const path = require('path');
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-
-// Import routes (to be created)
-const authRoutes = require('./routes/authRoutes');
-const productRoutes = require('./routes/productRoutes');
-const aiRoutes = require('./routes/aiRoutes');
-
+const xss = require('xss-clean');
+const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
-const errorHandler = require('./middleware/error');
+
+// Shared Middleware
+const errorHandler = require('./shared/error');
+
+// Module Routes
+const productRoutes = require('./modules/products/product.routes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -21,7 +20,9 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(mongoSanitize());
+app.use(cookieParser()); // Parse cookies
+app.use(mongoSanitize()); // Prevent NoSQL injection
+app.use(xss()); // Prevent XSS attacks
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -30,20 +31,19 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use(morgan('dev'));
-
-// Swagger Documentation
-// const swaggerDocument = YAML.load(path.join(__dirname, '../swagger.yaml'));
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Dev logging middleware
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 // Routes
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Essenté API' });
 });
 
+// Mount Module Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
-app.use('/api/v1/ai', aiRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);
