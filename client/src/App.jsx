@@ -20,7 +20,7 @@ import Checkout from './pages/Checkout'
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
       <AuthProvider>
         <CartProvider>
