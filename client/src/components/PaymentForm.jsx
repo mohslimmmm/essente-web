@@ -3,7 +3,7 @@ import { FiCheckCircle, FiAlertCircle, FiLock, FiRefreshCw, FiWifiOff } from 're
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
-const PaymentForm = ({ shippingAddress, cart, itemsPrice, taxPrice, shippingPrice, totalPrice, onSuccess, onError }) => {
+const PaymentForm = ({ shippingAddress, cart, itemsPrice, taxPrice, shippingPrice, totalPrice, onSuccess, onError, email }) => {
   const { user } = useAuth();
   const [status, setStatus] = useState('idle'); // idle, processing, success, error
   const [errorMessage, setErrorMessage] = useState('');
@@ -12,6 +12,13 @@ const PaymentForm = ({ shippingAddress, cart, itemsPrice, taxPrice, shippingPric
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (status === 'processing') return;
+
+    // Validate email for guest
+    if (!user && !email) {
+        setErrorMessage("Please provide an email address.");
+        setStatus('error');
+        return;
+    }
 
     setStatus('processing');
     setErrorMessage('');
@@ -34,7 +41,8 @@ const PaymentForm = ({ shippingAddress, cart, itemsPrice, taxPrice, shippingPric
         taxPrice,
         shippingPrice,
         totalPrice,
-        isPaid: false
+        isPaid: false,
+        email: email // Add email to payload
       };
 
       // Add simple timeout/race for network edge case

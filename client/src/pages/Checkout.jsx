@@ -17,6 +17,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [guestEmail, setGuestEmail] = useState('');
   const [shippingAddress, setShippingAddress] = useState({
     address: '',
     city: '',
@@ -65,6 +66,35 @@ const Checkout = () => {
           <div className="lg:col-span-2 space-y-8">
             {/* Error display handled inside PaymentForm for better context */}
             <div className="space-y-8">
+              
+              {/* Contact Info (For Guest) */}
+              {!user && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white p-8 rounded-lg shadow-sm border border-gray-100"
+                >
+                   <div className="flex items-center gap-4 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-essente-charcoal text-white flex items-center justify-center">
+                      <FiCheckCircle size={20} />
+                    </div>
+                    <h2 className="text-xl font-medium text-essente-charcoal">Contact Information</h2>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input
+                      type="email"
+                      value={guestEmail}
+                      onChange={(e) => setGuestEmail(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] outline-none transition-colors"
+                      placeholder="email@example.com"
+                    />
+                    <p className="text-xs text-gray-500 mt-2">We will send your order confirmation here.</p>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Shipping Address */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -156,6 +186,7 @@ const Checkout = () => {
                     totalPrice={totalPrice}
                     onSuccess={handlePaymentSuccess}
                     onError={handlePaymentError}
+                    email={user ? user.email : guestEmail}
                   />
                 </div>
               </motion.div>

@@ -1,0 +1,6 @@
+[2026-02-18T11:15:35.458Z] Starting restore script...
+[2026-02-18T11:15:35.480Z] Found 33 valid images to process.
+[2026-02-18T11:15:36.080Z] Connected to MongoDB
+[2026-02-18T11:15:36.129Z] Cleared existing products
+[2026-02-18T11:15:37.353Z] Restore complete. Success: 33, Failed: 0
+[2026-02-18T11:15:37.387Z] Total products in DB: 33

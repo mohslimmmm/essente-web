@@ -17,7 +17,6 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   
-  // ... existing state ...
   // State for SKU variants
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -27,11 +26,96 @@ const ProductDetail = () => {
   const [error, setError] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  // ... existing useEffects & handlers (useMemo, useCallback) ...
+  // Fetch product data
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        // Use the centralized API instance (port 5001)
+        const { data } = await import('../services/api').then(module => module.default.get(`/products/${id}`));
+        
+        if (data.success) {
+          setProduct(data.data);
+          // Reset selections when product changes
+          setSelectedSize('');
+          setSelectedColor('');
+          setQuantity(1);
+        } else {
+            setError('Product not found');
+        }
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setError(err.response?.data?.message || 'Failed to load product');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Loading and Error states (keep existing)
+    if (id) {
+        fetchProduct();
+    }
+  }, [id]);
+
+
+  // Derived state for variants (Safe to access product with optional chaining)
+  const variants = product?.variants || [];
+  
+  const availableSizes = useMemo(() => {
+    if (!variants.length) return [];
+    const sizes = new Set(variants.map(v => v.size).filter(Boolean));
+    return Array.from(sizes);
+  }, [variants]);
+
+  const availableColors = useMemo(() => {
+    if (!variants.length) return [];
+    const filtered = selectedSize 
+        ? variants.filter(v => v.size === selectedSize)
+        : variants;
+    const colors = new Set(filtered.map(v => v.color).filter(Boolean));
+    return Array.from(colors);
+  }, [variants, selectedSize]);
+
+  const currentVariant = useMemo(() => {
+    if (!variants.length) return null;
+    return variants.find(v => 
+        (!v.size || v.size === selectedSize) && 
+        (!v.color || v.color === selectedColor)
+    );
+  }, [variants, selectedSize, selectedColor]);
+
+  const currentPrice = currentVariant ? currentVariant.price : product?.price;
+  const currentStock = currentVariant ? currentVariant.stock : product?.stock;
+  const isOutOfStock = currentStock <= 0;
+
+  const handleAddToCart = useCallback(() => {
+    if (!product) return;
+    
+    // Validate variant selection if variants exist
+    if (variants.length > 0 && (!selectedSize && availableSizes.length > 0)) {
+        alert('Please select a size');
+        return;
+    }
+    if (variants.length > 0 && (!selectedColor && availableColors.length > 0)) {
+        alert('Please select a color');
+        return;
+    }
+
+    addToCart({
+        id: product._id,
+        name: product.name,
+        price: currentPrice,
+        image: product.image,
+        size: selectedSize,
+        color: selectedColor,
+        quantity: quantity,
+        sku: currentVariant?.sku || product.sku
+    });
+
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  }, [product, currentVariant, selectedSize, selectedColor, quantity, addToCart, variants, currentPrice, availableSizes, availableColors]);
+
+  // Loading and Error states (Must be AFTER all hooks)
   if (loading) {
-     // ...
      return (
       <div className="min-h-screen bg-essente-cream flex items-center justify-center">
         <div className="text-center">
@@ -43,7 +127,6 @@ const ProductDetail = () => {
   }
 
   if (error || !product) {
-     // ...
      return (
       <div className="min-h-screen bg-essente-cream flex items-center justify-center">
         <div className="text-center">
@@ -61,7 +144,7 @@ const ProductDetail = () => {
     );
   }
 
-  // SEO: Structured Data (JSON-LD)
+  // SEO: Structured Data (JSON-LD) - Safe now as product is guaranteed
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -83,7 +166,7 @@ const ProductDetail = () => {
     },
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "4.8", // Example, strictly should come from DB
+      "ratingValue": "4.8", 
       "reviewCount": product.numReviews || 89
     }
   };

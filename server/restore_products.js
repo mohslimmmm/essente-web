@@ -2,10 +2,39 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Product = require('./src/models/Product');
 const path = require('path');
+const fs = require('fs');
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
+console.log("Loading .env from:", path.join(__dirname, '.env'));
+console.log("MONGO_URI:", process.env.MONGO_URI ? "Defined" : "Undefined");
 
-mongoose.connect(process.env.MONGO_URI);
+
+// Logging setup
+const logFile = path.join(__dirname, 'debug_restore.log');
+const log = (msg) => {
+    const timestamp = new Date().toISOString();
+    const logMsg = `[${timestamp}] ${msg}\n`;
+    console.log(msg);
+    try {
+        fs.appendFileSync(logFile, logMsg);
+    } catch (e) {
+        console.error("Failed to write to log file:", e);
+    }
+};
+
+// Clear previous log
+try { fs.writeFileSync(logFile, ''); } catch(e) {}
+
+log("Starting restore script...");
+
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://essente:atppRsJgyqd6UoGe@moh.ib5zv.mongodb.net/?appName=moh";
+
+mongoose.connect(MONGO_URI)
+    .then(() => log("Connected to MongoDB"))
+    .catch(err => {
+        log(`MongoDB connection error: ${err.message}`);
+        process.exit(1);
+    });
 
 const images = [
     "A_side_by_side_comparison_image__On_the_left__budget_items_are_styled_to_appear_luxurious__On_the_ri.png",
@@ -18,7 +47,7 @@ const images = [
     "Designer (1).png",
     "Designer (2).png",
     "Designer (3).png",
-    "Designer.png", // Skip logos and design assets if possible, but user might want them? let's include relevant ones
+    "Designer.png", 
     "Desk accessories.jpg",
     "Elegant Logo with Interlocking Fluid Shapes.png",
     "Evening routine.jpg",
@@ -47,15 +76,12 @@ const images = [
     "minimal bathroom.jpg"
 ];
 
-// Exclude logos
-const validImages = images.filter(img => !img.toLowerCase().includes('logo') && !img.includes('comparison'));
-
 const getCategory = (name) => {
     const lower = name.toLowerCase();
     if (lower.includes('bedroom') || lower.includes('bed')) return 'bedroom';
     if (lower.includes('living') || lower.includes('sofa') || lower.includes('curtain') || lower.includes('corner')) return 'living';
     if (lower.includes('office') || lower.includes('desk') || lower.includes('book')) return 'office';
-    if (lower.includes('bathroom')) return 'accessories'; // Mapping bathroom to accessories or living
+    if (lower.includes('bathroom')) return 'accessories';
     return 'accessories';
 };
 
@@ -64,11 +90,11 @@ const getPrice = () => Math.floor(Math.random() * (500 - 50 + 1) + 50);
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const cleanName = (filename) => {
-    let name = filename.split('.')[0]; // Remove extension
-    name = name.replace(/_/g, ' ').replace(/-/g, ' '); // Replace underscores/dashes
-    name = name.replace(/gemini.*image/i, ''); // Remove gemini prefix
+    let name = filename.split('.')[0];
+    name = name.replace(/_/g, ' ').replace(/-/g, ' ');
+    name = name.replace(/gemini.*image/i, '');
     name = name.replace(/lucid-origin/i, '');
-    name = name.replace(/\d+$/, ''); // Remove trailing numbers
+    name = name.replace(/\d+$/, '');
     name = name.trim();
     if (name.length < 3) name = "Luxury Item";
     return capitalize(name);
@@ -77,12 +103,14 @@ const cleanName = (filename) => {
 const restoreProducts = async () => {
     try {
         const validImages = images.filter(img => !img.toLowerCase().includes('logo') && !img.includes('comparison'));
-        
-        await Product.deleteMany({}); // Clear existing
-        console.log('Cleared existing products');
+        log(`Found ${validImages.length} valid images to process.`);
+
+        await Product.deleteMany({});
+        log('Cleared existing products');
 
         const seenNames = new Set();
-        const products = [];
+        let successCount = 0;
+        let failCount = 0;
 
         for (const img of validImages) {
             let name = cleanName(img);
@@ -91,21 +119,40 @@ const restoreProducts = async () => {
             }
             seenNames.add(name);
 
-            products.push({
+            const productData = {
                 name: name,
                 description: `Experience the essence of luxury with our ${name}. Crafted with precision and designed for the modern minimalist home.`,
                 price: getPrice(),
                 category: getCategory(name),
                 image: `/images/${img}`,
                 stock: 15,
-                isNewCollection: Math.random() > 0.7
-            });
+                isNewCollection: Math.random() > 0.7,
+                variants: [] // Initialize empty variants array
+            };
+
+            try {
+                await Product.create(productData);
+                successCount++;
+            } catch (err) {
+                log(`Failed to create product "${name}": ${err.message}`);
+                if (err.errors) {
+                    Object.keys(err.errors).forEach(key => {
+                        log(`  - ${key}: ${err.errors[key].message}`);
+                    });
+                }
+                failCount++;
+            }
         }
 
-        await Product.create(products);
-        console.log(`Restored ${products.length} products successfully.`);
-        process.exit();
+        log(`Restore complete. Success: ${successCount}, Failed: ${failCount}`);
+        
+        // Final count check
+        const total = await Product.countDocuments();
+        log(`Total products in DB: ${total}`);
+
+        process.exit(0);
     } catch (err) {
+        log(`Critical Error: ${err.message}`);
         console.error(err);
         process.exit(1);
     }

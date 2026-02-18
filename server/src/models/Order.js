@@ -4,7 +4,11 @@ const OrderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false // Allow guest checkout
+  },
+  guestInfo: {
+    email: { type: String },
+    name: { type: String } // Optional, can use shipping address name if needed
   },
   orderItems: [
     {

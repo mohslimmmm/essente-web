@@ -2,8 +2,8 @@ require('dotenv').config();
 const app = require('./app');
 const mongoose = require('mongoose');
 
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/essente';
+const PORT = process.env.PORT || 5001;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://essente:atppRsJgyqd6UoGe@moh.ib5zv.mongodb.net/?appName=moh';
 
 // Database Connection
 mongoose.connect(MONGO_URI)

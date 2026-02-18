@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import ProductCard from '../components/common/ProductCard';
 import { motion } from 'framer-motion';
 import { FiGrid, FiList, FiFilter, FiSearch, FiX } from 'react-icons/fi';
@@ -28,7 +28,7 @@ const Collection = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
+        const { data } = await api.get('/products');
         if (data.success && data.data.length > 0) {
           // Map _id to id for compatibility
           const mappedProducts = data.data.map(p => ({ ...p, id: p._id }));

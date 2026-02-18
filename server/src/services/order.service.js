@@ -62,8 +62,7 @@ class OrderService {
     // Force numbers to avoid string concatenation
     const secureTotalPrice = Number(itemsPrice) + Number(shippingPrice || 0) + Number(taxPrice || 0);
 
-    const order = await OrderRepository.create({
-      user: userId,
+    const orderDataToSave = {
       orderItems: dbOrderItems,
       shippingAddress,
       paymentMethod,
@@ -73,7 +72,19 @@ class OrderService {
       totalPrice: Number(secureTotalPrice.toFixed(2)),
       isPaid: false,
       status: 'pending'
-    });
+    };
+
+    if (userId) {
+        orderDataToSave.user = userId;
+    } else {
+        // Guest Checkout
+        if (!orderData.email) {
+            throw new AppError('Email is required for guest checkout', 400);
+        }
+        orderDataToSave.guestInfo = { email: orderData.email };
+    }
+
+    const order = await OrderRepository.create(orderDataToSave);
 
     return order;
   }
@@ -86,8 +97,18 @@ class OrderService {
     }
 
     // Authorization check
-    if (order.user.toString() !== userId.toString() && userRole !== 'admin') {
+    // If order has a user, ensure it matches the requesting user
+    if (order.user && order.user.toString() !== userId.toString() && userRole !== 'admin') {
       throw new AppError('Not authorized to view this order', 403);
+    }
+    // If order has NO user (Guest), effectively only Admin can view it via this endpoint,
+    // unless we implement a "view by secret query param" logic.
+    // GUIDANCE: For now, block guests from fetching by ID via this route if they defined no user.
+    if (!order.user && userRole !== 'admin') {
+         // Currently no way for a guest to "login" and view the order.
+         // We might want to allow it if they just created it? But this is stateless.
+         // Effectively, fail safe.
+         throw new AppError('Not authorized', 403); 
     }
 
     return order;

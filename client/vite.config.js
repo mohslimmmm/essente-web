@@ -5,7 +5,7 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/essente-web/',
+  // base: '/essente-web/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
