@@ -8,18 +8,23 @@ const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 
 // Shared Middleware
-const errorHandler = require('./shared/error');
+const errorHandler = require('./middleware/error.middleware');
 
 // Module Routes
-const productRoutes = require('./modules/products/product.routes');
+const productRoutes = require('./routes/productRoutes');
 const authRoutes = require('./routes/authRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 const app = express();
 
 // Middleware
 app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(cookieParser()); // Parse cookies
 app.use(mongoSanitize()); // Prevent NoSQL injection
 app.use(xss()); // Prevent XSS attacks
@@ -44,6 +49,9 @@ app.get('/', (req, res) => {
 // Mount Module Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/payment', require('./routes/paymentRoutes'));
+// app.use('/api/v1/webhook', require('./routes/webhookRoutes')); // Disabled for now
 
 // Error Handling Middleware
 app.use(errorHandler);

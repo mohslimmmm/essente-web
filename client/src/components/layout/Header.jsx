@@ -11,7 +11,7 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const { user, logout, isAuthenticated } = useAuth();
-  const { cart, isAnimationActive } = useCart(); // Use CartContext
+  const { cart, isAnimationActive, openCart } = useCart(); // Use CartContext
   const navigate = useNavigate();
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -32,7 +32,7 @@ const Header = () => {
           {/* Logo */}
           <h1 className="text-xl md:text-3xl font-elegant font-light tracking-widest transition-all duration-300" id="logo">
             <Link to="/" className="block">
-              <img src={logo} alt="ESSENTÉ" className="h-8 md:h-10 w-auto object-contain" /> 
+              <img src={logo} alt="ESSENTÉ" className="h-12 md:h-16 w-auto object-contain" /> 
             </Link>
           </h1>
 
@@ -47,11 +47,6 @@ const Header = () => {
             <Link to="/philosophie" className="nav-link hover:text-essente-gold transition-colors duration-300">
               Philosophie
             </Link>
-            {user?.role === 'admin' && (
-               <Link to="/admin/dashboard" className="nav-link hover:text-essente-gold transition-colors duration-300 text-essente-gold">
-                Admin
-              </Link>
-            )}
           </nav>
 
           {/* User Actions */}
@@ -85,20 +80,18 @@ const Header = () => {
                 </Link>
             )}
             
-            <Link to="/cart" className="relative text-xl hover:text-essente-gold transition duration-300 group">
-              <motion.div
-                animate={isAnimationActive ? { scale: [1, 1.2, 1] } : {}}
-                transition={{ duration: 0.3 }}
-              >
-                <FiShoppingBag />
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#C5A059] rounded-full"></span>
-                )}
-              </motion.div>
-            </Link>
+            {/* Cart Icon */}
+            <button onClick={openCart} className="relative group">
+              <FiShoppingBag className="text-xl group-hover:text-[#C5A059] transition duration-300" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#C5A059] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </button>
           </div>
         </div>
-        
+
         {/* Search Bar */}
         {isSearchOpen && (
           <div className="absolute top-full left-0 w-full bg-[#F9F9F9] border-t border-gray-100 p-4 shadow-sm animate-fade-in">

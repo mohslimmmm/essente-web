@@ -9,7 +9,7 @@ export default {
       colors: {
         'essente-cream': '#F9F9F7',
         'essente-charcoal': '#1A1A1A',
-        'essente-gold': '#C5A059',
+        'essente-gold': '#D4AF37',
         'essente-gold-light': '#E8D4B0',
         'essente-gold-dark': '#A08442',
         'primary-navy': '#0a192f',

@@ -7,7 +7,7 @@ const validate = (schema) => (req, res, next) => {
     });
     next();
   } catch (e) {
-    return res.status(400).send(e.errors);
+    return res.status(400).json(e.errors);
   }
 };
 

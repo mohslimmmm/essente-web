@@ -1,11 +1,11 @@
-const Product = require('../models/Product');
+const ProductService = require('../services/product.service');
 
 // @desc    Get all products
 // @route   GET /api/v1/products
 // @access  Public
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await ProductService.getAllProducts(req.query);
     res.status(200).json({
       success: true,
       count: products.length,
@@ -21,12 +21,7 @@ exports.getProducts = async (req, res, next) => {
 // @access  Public
 exports.getProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
-
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-
+    const product = await ProductService.getProductById(req.params.id);
     res.status(200).json({
       success: true,
       data: product
@@ -41,7 +36,7 @@ exports.getProduct = async (req, res, next) => {
 // @access  Private (Admin)
 exports.createProduct = async (req, res, next) => {
   try {
-    const product = await Product.create(req.body);
+    const product = await ProductService.createProduct(req.body);
     res.status(201).json({
       success: true,
       data: product
@@ -56,15 +51,7 @@ exports.createProduct = async (req, res, next) => {
 // @access  Private (Admin)
 exports.updateProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
-
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-
+    const product = await ProductService.updateProduct(req.params.id, req.body);
     res.status(200).json({
       success: true,
       data: product
@@ -79,12 +66,7 @@ exports.updateProduct = async (req, res, next) => {
 // @access  Private (Admin)
 exports.deleteProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-
+    await ProductService.deleteProduct(req.params.id);
     res.status(200).json({
       success: true,
       data: {}

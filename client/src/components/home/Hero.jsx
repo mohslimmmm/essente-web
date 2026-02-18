@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -24,24 +25,44 @@ const Hero = () => {
         {/* Slide 1 */}
         <SwiperSlide>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[80vh] px-6 md:px-16 bg-essente-cream">
-            <div className="space-y-6 text-center md:text-left animate-fade-in-up">
-              <span className="inline-block px-4 py-2 bg-essente-gold text-essente-charcoal text-sm uppercase tracking-widest rounded-full mb-4 animate-pulse">
+            <div className="space-y-6 text-center md:text-left">
+              <motion.span 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-block px-4 py-2 bg-essente-gold text-essente-charcoal text-sm uppercase tracking-widest rounded-full mb-4"
+              >
                 Nouvelle Collection
-              </span>
-              <h2 className="text-5xl md:text-7xl lg:text-8xl font-elegant font-light leading-tight">
+              </motion.span>
+              <motion.h2 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-5xl md:text-7xl lg:text-8xl font-elegant font-light leading-tight"
+              >
                 L'Essentiel, <br className="hidden md:block" /><span className="text-essente-gold">Redéfini.</span>
-              </h2>
-              <p className="text-lg md:text-xl font-light italic tracking-wider text-essente-charcoal/80 max-w-lg">
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="text-lg md:text-xl font-light italic tracking-wider text-essente-charcoal/80 max-w-lg mx-auto md:mx-0"
+              >
                 Une approche consciente du luxe minimaliste.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+              </motion.p>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex flex-col sm:flex-row gap-4 mt-8 justify-center md:justify-start"
+              >
                 <Link to="/collection" className="bg-[#000] text-[#fff] px-[40px] py-[15px] rounded-none tracking-[1px] uppercase text-sm hover:opacity-80 transition-opacity duration-300">
                   DÉCOUVRIR LA COLLECTION
                 </Link>
                 <Link to="/philosophie" className="px-8 py-3 text-essente-charcoal bg-transparent border border-essente-charcoal hover:bg-essente-charcoal hover:text-essente-cream transition-all duration-300 uppercase text-sm tracking-widest rounded-lg">
                   Notre Philosophie
                 </Link>
-              </div>
+              </motion.div>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-2xl h-full">
               <img src={imgHero1}
@@ -54,21 +75,41 @@ const Hero = () => {
         {/* Slide 2 */}
         <SwiperSlide>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[80vh] px-6 md:px-16 bg-essente-cream">
-            <div className="space-y-6 text-center md:text-left animate-fade-in-up">
-              <span className="inline-block px-4 py-2 bg-essente-gold text-essente-charcoal text-sm uppercase tracking-widest rounded-full mb-4">
+            <div className="space-y-6 text-center md:text-left">
+              <motion.span 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-block px-4 py-2 bg-essente-gold text-essente-charcoal text-sm uppercase tracking-widest rounded-full mb-4"
+              >
                 Édition Limitée
-              </span>
-              <h2 className="text-5xl md:text-7xl lg:text-8xl font-elegant font-light leading-tight">
+              </motion.span>
+              <motion.h2 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-5xl md:text-7xl lg:text-8xl font-elegant font-light leading-tight"
+              >
                 Qualité <br className="hidden md:block" />sur Quantité
-              </h2>
-              <p className="text-lg md:text-xl font-light italic tracking-wider text-essente-charcoal/80 max-w-lg">
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="text-lg md:text-xl font-light italic tracking-wider text-essente-charcoal/80 max-w-lg mx-auto md:mx-0"
+              >
                 Investissez dans des pièces conçues pour durer toute une vie.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <button className="px-8 py-3 text-essente-cream bg-essente-charcoal border border-essente-charcoal hover:bg-essente-charcoal/90 transition-all duration-300 uppercase text-sm tracking-widest rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              </motion.p>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex flex-col sm:flex-row gap-4 mt-8 justify-center md:justify-start"
+              >
+                <Link to="/collection" className="px-8 py-3 text-essente-cream bg-essente-charcoal border border-essente-charcoal hover:bg-essente-charcoal/90 transition-all duration-300 uppercase text-sm tracking-widest rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                   Explorer les Matières
-                </button>
-              </div>
+                </Link>
+              </motion.div>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-2xl order-first md:order-last h-full">
               <img src={imgHero2}

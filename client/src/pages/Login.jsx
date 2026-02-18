@@ -69,7 +69,7 @@ const Login = () => {
           </div>
 
           {error && (
-            <div className="text-red-500 text-sm text-center">
+            <div className="text-red-500 text-sm text-center whitespace-pre-wrap">
               {error}
             </div>
           )}

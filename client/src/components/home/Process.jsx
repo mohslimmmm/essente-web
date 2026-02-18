@@ -25,7 +25,16 @@ const Process = () => {
     <section id="processus" className="py-20 md:py-32 bg-[#F9F9F9] max-w-7xl mx-auto px-4">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h3 className="text-4xl md:text-5xl font-elegant text-[#1a1a1a] mb-4">Le Savoir-Faire ESSENTÉ</h3>
+          <h3 className="text-4xl md:text-5xl font-elegant text-[#1a1a1a] mb-4">
+            Le Savoir-Faire <motion.span 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 100 }}
+              className="text-[#C5A059] inline-block"
+            >
+              ESSENTÉ
+            </motion.span>
+          </h3>
           <p className="text-lg text-[#1a1a1a]/70 max-w-2xl mx-auto">
             De la sélection des matières premières à la finition artisanale.
           </p>

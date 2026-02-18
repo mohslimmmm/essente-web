@@ -7,6 +7,7 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Calculate total whenever cart changes
   useEffect(() => {
@@ -17,14 +18,16 @@ export const CartProvider = ({ children }) => {
   // Add item to cart
   const addToCart = (product) => {
     const existingItem = cart.find((item) => item.id === product.id);
+    const quantityToAdd = product.quantity || 1;
     
     if (existingItem) {
       setCart(cart.map((item) =>
-        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === product.id ? { ...item, quantity: item.quantity + quantityToAdd } : item
       ));
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([...cart, { ...product, quantity: quantityToAdd }]);
     }
+    setIsCartOpen(true); // Open cart when adding item
   };
 
   // Remove item from cart
@@ -49,6 +52,10 @@ export const CartProvider = ({ children }) => {
   // Fly-to-Cart Animation State
   const [isAnimationActive, setIsAnimationActive] = useState(false);
 
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
+  const toggleCart = () => setIsCartOpen(!isCartOpen);
+
   const triggerFlyAnimation = () => {
     setIsAnimationActive(true);
     setTimeout(() => setIsAnimationActive(false), 1000); // Reset after 1s
@@ -63,7 +70,11 @@ export const CartProvider = ({ children }) => {
       updateQuantity, 
       clearCart,
       isAnimationActive,
-      triggerFlyAnimation
+      triggerFlyAnimation,
+      isCartOpen,
+      openCart,
+      closeCart,
+      toggleCart
     }}>
       {children}
     </CartContext.Provider>

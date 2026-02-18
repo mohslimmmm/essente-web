@@ -46,8 +46,30 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       return { success: true };
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-      return { success: false, error: err.response?.data?.message || 'Login failed' };
+      console.error("Login Error:", err);
+      let errorMessage = 'Login failed';
+      
+      if (err.response) {
+          const data = err.response.data;
+          if (Array.isArray(data)) {
+              errorMessage = data.map(e => e.message).join('\n');
+          } else if (typeof data === 'string') {
+              errorMessage = data;
+          } else if (data.message) {
+              errorMessage = data.message;
+          } else if (data.error) {
+              errorMessage = data.error;
+          } else {
+              errorMessage = `Server Error (${err.response.status}): ${JSON.stringify(data)}`;
+          }
+      } else if (err.request) {
+          errorMessage = 'No response from server. Please ensure the backend is running.';
+      } else {
+          errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
@@ -65,8 +87,30 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       return { success: true };
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
-      return { success: false, error: err.response?.data?.message || 'Registration failed' };
+      console.error("Registration Error:", err);
+      let errorMessage = 'Registration failed';
+      
+      if (err.response) {
+          const data = err.response.data;
+          if (Array.isArray(data)) {
+              errorMessage = data.map(e => e.message).join('\n');
+          } else if (typeof data === 'string') {
+              errorMessage = data;
+          } else if (data.message) {
+              errorMessage = data.message;
+          } else if (data.error) {
+              errorMessage = data.error;
+          } else {
+              errorMessage = `Server Error (${err.response.status}): ${JSON.stringify(data)}`;
+          }
+      } else if (err.request) {
+          errorMessage = 'No response from server. Please ensure the backend is running.';
+      } else {
+          errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }

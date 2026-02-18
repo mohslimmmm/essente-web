@@ -3,8 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     @apply font-body bg-essente-cream text-essente-charcoal antialiased overflow-x-hidden;
+  }
+  
+  ::selection {
+    @apply bg-essente-gold text-white;
   }
 }
 
